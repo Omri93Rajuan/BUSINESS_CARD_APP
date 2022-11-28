@@ -1,25 +1,19 @@
-const Card = require("../models/cardsAccessDataService");
+const Card = require("../models/mongodb/Card");
 const lodash = require("lodash");
-const { handleBadRequest } = require("../../utils/errorHandler");
+const { handleBadRequest } = require("../../utils/handleErrors");
 
 const generateBizNumber = async () => {
-    try{
+  try {
     const random = lodash.random(1_000_000, 9_999_999);
-    const card = Card.findOne(
-        {bizNumber: random},
-        {bizNumber:1,_id:0} )
-        if(card) return generateBizNumber();
-        return random;
-    }
-    catch(error){
-return handleBadRequest("generateBizNumber",error)
-    }
+    const card = await Card.findOne(
+      { bizNumber: random },
+      { bizNumber: 1, _id: 0 }
+    );
+    if (card) return generateBizNumber();
+    return random;
+  } catch (error) {
+    return handleBadRequest("GenerateBizNumber", error);
+  }
+};
 
-
-    module.exports = generateBizNumber
-    
-    
-
-
-
-}
+module.exports = generateBizNumber;
