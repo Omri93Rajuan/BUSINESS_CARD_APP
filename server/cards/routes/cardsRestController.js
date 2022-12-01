@@ -47,19 +47,13 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     let card = req.body;
-    console.log(1);
 
     const user = { _id: "6376667871c9c1d0b30481f7" };
     const { error } = validateCard(card);
-    console.log(2);
     if (error)
       return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
-console.log(3);
     card = await normalizeCard(card, user._id);
-    console.log(4);
-
     card = await createCard(card);
-    console.log(5);
     return res.status(201).send(card);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);

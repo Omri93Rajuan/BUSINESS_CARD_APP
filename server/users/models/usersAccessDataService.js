@@ -1,36 +1,47 @@
 const DB = process.env.DB || "MONGODB";
-const normalizeUser = require("../helpers/normalizeUser");
 const User = require("./mongodb/User");
+const lodash = require("lodash");
+const { comparePassword } = require("../helpers/bcrypt");
+const { generateAuthToken } = require("../../auth/Providers/jwt");
 const { handleBadRequest } = require("../../utils/handleErrors");
 
-const registerUser = async (normalizedUser) => {
+
+const registerUser= async normalizeUser => {
   if (DB === "MONGODB") {
     try {
-      normalizedUser._id = "123456";
-      //   throw new Error("Opss... i did it again!");
-      return Promise.resolve(normalizedUser);
+      const { email } = normalizeUser;
+      let user = await User.findOne({ email });
+      if (user) throw new Error("User already registered");
+      user = new User(normalizeUser);
+      user = await user.save();
+      user = lodash.pick(user, ["name", "email", "_id"]);
+      return Promise.resolve(user);
+    } catch (error) {
+      return handleBadRequest("Mongoose", error);
+    }
+  }
+
+  return Promise.resolve({});
+};
+
+const loginUser = async ({ email, password }) => {
+  if (DB === "MONGODB") {
+    try {
+      const user = await User.findOne({ email });
+      if (!user)
+        throw new Error("Authentication Error: Invalid email or password");
+
+      const validPassword = comparePassword(password, user.password);
+      if (!validPassword)
+        throw new Error("Authentication Error: Invalid email or password");
+      const token = generateAuthToken(user);
+      return Promise.resolve(token);
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
     }
   }
-  return Promise.resolve("registerUser new user not in mongodb");
-};
-
-const loginUser = async (normalizedUser) => {
-  if (DB === "MONGODB") {
-    try {
-      const { email, password } = normalizedUser;
-      const user = User.findOne({ email });
-      if (!user) throw new Error("Invalid email or password");
-      if (!user.password === password)
-        throw new Error("Invalid email or password");
-      return Promise.resolve("user is login in");
-    } catch (error) {
-      return handleBadRequest("Mongoose", error);
-    }
-  }
-  return Promise.resolve({});
+  return Promise.resolve("loginUser user not in mongodb");
 };
 
 const getUsers = async () => {

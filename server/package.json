@@ -1,23 +1,25 @@
 {
-  "name": "business_cards_app",
-  "version": "3.0.0",
-  "description": "Business cards app with MERN",
+  "name": "app.listen",
+  "version": "1.0.0",
+  "description": "Creating a server for business cards app",
   "main": "server.js",
   "scripts": {
-    "start": "node .",
-    "test": "node test.js",
-    "dev": "nodemon ."
+    "start": "set NODE_ENV=production&&  node .",
+    "dev": "set NODE_ENV=development&& nodemon ."
   },
-  "author": "David Yakin",
+  "author": "Omri Rajuan",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "chalk": "^4.1.1",
     "config": "^3.3.8",
     "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "joi": "^17.7.0",
+    "cross-env": "^7.0.3",
+    "express": "^4.18.1",
+    "joi": "^17.6.2",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
-    "mongoose": "^6.7.2",
+    "mongoose": "^6.6.5",
     "morgan": "^1.10.0"
   },
   "devDependencies": {

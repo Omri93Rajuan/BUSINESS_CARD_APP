@@ -17,6 +17,11 @@ const {
   validateUserUpdate,
 } = require("../validations/userValidationService");
 const router = express.Router();
+const { generateUserPassword } = require("../helpers/bcrypt");
+
+
+
+
 
 router.post("/", async (req, res) => {
   try {
@@ -26,6 +31,7 @@ router.post("/", async (req, res) => {
       return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
 
     user = normalizeUser(user);
+    user.password = generateUserPassword(user.password);
     user = await registerUser(user);
     return res.status(201).send(user);
   } catch (error) {
