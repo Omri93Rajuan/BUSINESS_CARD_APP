@@ -5,8 +5,7 @@ const { comparePassword } = require("../helpers/bcrypt");
 const { generateAuthToken } = require("../../auth/Providers/jwt");
 const { handleBadRequest } = require("../../utils/handleErrors");
 
-
-const registerUser= async normalizeUser => {
+const registerUser = async (normalizeUser) => {
   if (DB === "MONGODB") {
     try {
       const { email } = normalizeUser;
@@ -24,18 +23,28 @@ const registerUser= async normalizeUser => {
   return Promise.resolve({});
 };
 
+let wrongPass = 0;
+
 const loginUser = async ({ email, password }) => {
   if (DB === "MONGODB") {
     try {
-      const user = await User.findOne({ email });
-      if (!user)
-        throw new Error("Authentication Error: Invalid email or password");
+      if (wrongPass !== 3) {
+        const user = await User.findOne({ email });
+        if (!user) {
+          throw new Error("Authentication Error: Invalid email or password");
+        }
 
-      const validPassword = comparePassword(password, user.password);
-      if (!validPassword)
-        throw new Error("Authentication Error: Invalid email or password");
-      const token = generateAuthToken(user);
-      return Promise.resolve(token);
+        const validPassword = comparePassword(password, user.password);
+        if (!validPassword) {
+          wrongPass++;
+          throw new Error("Authentication Error: Invalid email or password");
+        }
+        const token = generateAuthToken(user);
+        return Promise.resolve(token);
+      } else {
+        setTimeout(() => (wrongPass = 0), 1000 * 60 * 60 * 24);
+        throw new Error("you blocked for 24H try next day");
+      }
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
@@ -62,7 +71,7 @@ const getUser = async (userId) => {
     try {
       let user = await User.findById(userId, {
         password: 0,
-        isAdmin:0,
+        isAdmin: 0,
         __v: 0,
       });
       if (!user) throw new Error("Could not find this user in the database");
@@ -75,10 +84,10 @@ const getUser = async (userId) => {
   return Promise.resolve("get user not in mongodb");
 };
 
-const updateUser =  async (id, normalizeUser) => {
+const updateUser = async (id, normalizeUser) => {
   if (DB === "MONGODB") {
     try {
-      let user = await User.findByIdAndUpdate( id, await normalizeUser, {
+      let user = await User.findByIdAndUpdate(id, await normalizeUser, {
         new: true,
       }).select(["-password", "-__v"]);
 
@@ -95,7 +104,7 @@ const updateUser =  async (id, normalizeUser) => {
   return Promise.resolve("User Updated!");
 };
 
-const changeUserBusinessStatus = async id => {
+const changeUserBusinessStatus = async (id) => {
   if (DB === "MONGODB") {
     try {
       const pipeline = [{ $set: { isBusiness: { $not: "$isBusiness" } } }];
@@ -120,7 +129,11 @@ const changeUserBusinessStatus = async id => {
 const deleteUser = async (id) => {
   if (DB === "MONGODB") {
     try {
-      let user = await User.findByIdAndDelete(id, { password: 0,isAdmin:0, __v: 0 });
+      let user = await User.findByIdAndDelete(id, {
+        password: 0,
+        isAdmin: 0,
+        __v: 0,
+      });
       if (!user)
         throw new Error(
           "Could not delete this user because a user with this ID cannot be found in the database"
