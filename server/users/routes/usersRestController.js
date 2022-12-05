@@ -74,7 +74,6 @@ router.get("/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
     const { _id, isAdmin } = req.user;
-
     if (_id !== id && !isAdmin)
       return handleError(
         res,
@@ -94,7 +93,10 @@ router.put("/:id", auth, async (req, res) => {
     let rawUser = req.body;
     const userId = req.params.id;
     const{_id} = req.user
+
+
     if (_id !== userId)
+
       return handleError(
         res,
         403,

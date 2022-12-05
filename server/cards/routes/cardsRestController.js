@@ -1,4 +1,5 @@
 const express = require("express");
+const auth = require("../../auth/authService");
 const { handleError } = require("../../utils/handleErrors");
 const normalizeCard = require("../helpers/normalizeCard");
 const {
@@ -9,15 +10,32 @@ const {
   updateCard,
   likeCard,
   deleteCard,
+  getMyLikesCards,
 } = require("../models/cardsAccessDataService");
 const validateCard = require("../validations/cardValidationService");
 const router = express.Router();
 
-router.get("/my-cards", async (req, res) => {
-  console.log(1);
+router.get("/my-cards", auth, async (req, res) => {
   try {
-    const userId = 123456;
-    const card = await getMyCards(userId);
+    const { isBusiness, _id } = req.user;
+    console.log(_id);
+    if (!isBusiness)
+      return handleError(
+        res,
+        403,
+        "Authorization Error: You must be an business type user or the registered user to see this user details"
+      );
+    const card = await getMyCards(_id);
+    return res.send(card);
+  } catch (error) {
+    return handleError(res, error.status || 500, error.message);
+  }
+});
+
+router.get("/likes-cards", auth, async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const card = await getMyLikesCards(_id);
     return res.send(card);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);
@@ -33,7 +51,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -44,11 +61,18 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
     let card = req.body;
+    const { isBusiness, _id } = req.user;
+    if (!isBusiness)
+      return handleError(
+        res,
+        403,
+        "Authorization Error: You must be an business type user to post a new card"
+      );
 
-    const user = { _id: "6376667871c9c1d0b30481f7" };
+    const user = { _id };
     const { error } = validateCard(card);
     if (error)
       return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
@@ -60,15 +84,25 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id/", auth, async (req, res) => {
   try {
+    let cardId = req.params.id;
+    const allCard = await getCard(cardId);
+    const {user_id} =allCard
     let card = req.body;
-    const cardId = req.params.id;
+    let { _id, isBusiness } = req.user;
+
+    if (!isBusiness || _id !== user_id.toString())
+    return handleError(
+      res,
+      403,
+      "Authorization Error: You must be an business type user to update a  card"
+
+    );
 
     const { error } = validateCard(card);
     if (error)
       return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
-
     card = await normalizeCard(card);
     card = await updateCard(cardId, card);
     return res.send(card);
@@ -77,22 +111,32 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id",auth, async (req, res) => {
   try {
     const cardId = req.params.id;
-    const user = { _id: "6376667871c9c1d0b3pp0481f7" };
-    const card = await likeCard(cardId, user._id);
+    const {_id} = req.user
+    const card = await likeCard(cardId, _id);
     return res.send(card);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",auth, async (req, res) => {
   try {
     const cardId = req.params.id;
-    const user = { _id: "6376667871c9c1d0b30481f7" };
-    const card = await deleteCard(cardId, user);
+    const allCard = await getCard(cardId);
+    const {user_id} =allCard
+       const {_id, isAdmin} = req.user
+    if (_id !== user_id.toString() && !isAdmin)
+    return handleError(
+      res,
+      403,
+      "Authorization Error: You must be an admin type user to delete a  card"
+
+    );
+    
+    const card = await deleteCard(cardId, req.user);
     return res.send(card);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);
