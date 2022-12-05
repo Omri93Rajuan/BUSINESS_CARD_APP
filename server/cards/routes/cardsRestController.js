@@ -92,7 +92,7 @@ router.put("/:id/", auth, async (req, res) => {
     let card = req.body;
     let { _id, isBusiness } = req.user;
 
-    if (!isBusiness || _id !== user_id.toString())
+    if (!isBusiness && _id !== user_id.toString() ||  _id !== user_id.toString() )
     return handleError(
       res,
       403,
