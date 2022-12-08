@@ -23,10 +23,10 @@ const registerUser = async (normalizeUser) => {
   return Promise.resolve({});
 };
 
-let wrongPass = 0;
 
 const loginUser = async ({ email, password }) => {
   if (DB === "MONGODB") {
+    let wrongPass = 0;
     try {
       if (wrongPass !== 3) {
         const user = await User.findOne({ email });
