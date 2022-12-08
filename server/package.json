@@ -7,7 +7,7 @@
     "start": "set NODE_ENV=production&&  node .",
     "dev": "set NODE_ENV=development&& nodemon ."
   },
-  "author": "Omri Rajuan",
+  "author": "OmriRajuan",
   "license": "ISC",
   "dependencies": {
     "@google-cloud/storage": "^6.7.0",
