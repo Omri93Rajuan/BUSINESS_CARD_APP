@@ -1,7 +1,7 @@
 {
     "users": [
       {
-        "name": { "first": "regular", "last": "user" },
+        "name": { "first": "regular","middle":"", "last": "user" },
         "isBusiness": false,
         "phone": "050-0000000",
         "email": "regular@gmail.com",
@@ -15,7 +15,7 @@
         "image": { "url": "", "alt": "one" }
       },
       {
-        "name": { "first": "business", "last": "user" },
+        "name": { "first": "business","middle":"", "last": "user" },
         "isBusiness": true,
         "phone": "050-0000000",
         "email": "business@gmail.com",
@@ -29,7 +29,7 @@
         "image": { "url": "", "alt": "2" }
       },
       {
-        "name": { "first": "blogger", "last": "user" },
+        "name": { "first": "blogger","middle":"", "last": "user" },
         "isBusiness": true,
         "phone": "050-0000000",
         "email": "blogger@gmail.com",
@@ -43,7 +43,7 @@
         "image": { "url": "", "alt": "3" }
       },
       {
-        "name": { "first": "admin", "last": "user" },
+        "name": { "first": "admin","middle":"","last": "user" },
         "isBusiness": true,
         "isAdmin": true,
         "phone": "050-0000000",
