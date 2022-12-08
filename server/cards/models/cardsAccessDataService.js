@@ -1,3 +1,4 @@
+const { number } = require("joi");
 const { handleError, handleBadRequest } = require("../../utils/handleErrors");
 const normalizeCard = require("../helpers/normalizeCard");
 const Card = require("./mongodb/Card");
@@ -18,7 +19,6 @@ const getCards = async () => {
   return Promise.resolve("get cards not in mongodb");
 };
 
-
 const getMyCards = async (userId) => {
   if (DB === "MONGODB") {
     try {
@@ -36,8 +36,7 @@ const getMyLikesCards = async (userId) => {
   if (DB === "MONGODB") {
     try {
       const cards = await Card.find({});
-      const filterCards = cards.find((id)=> cards.likes = userId )
-
+      const filterCards = cards.find((id) => (cards.likes = userId));
 
       return Promise.resolve(filterCards);
     } catch (error) {
@@ -94,7 +93,6 @@ const updateCard = async (cardId, normalizedCard) => {
   return Promise.resolve("card updateCard not in mongodb");
 };
 
-    
 const likeCard = async (cardId, userId) => {
   if (DB === "MONGODB") {
     try {
@@ -102,14 +100,14 @@ const likeCard = async (cardId, userId) => {
       if (!card)
         throw new Error("A card with this ID cannot be found in the database");
 
-      const cardLikes = card.likes.find(id => id === userId);
+      const cardLikes = card.likes.find((id) => id === userId);
       if (!cardLikes) {
         card.likes.push(userId);
         card = await card.save();
         return Promise.resolve(card);
       }
 
-      const cardFiltered = card.likes.filter(id => id !== userId);
+      const cardFiltered = card.likes.filter((id) => id !== userId);
       card.likes = cardFiltered;
       card = await card.save();
       return Promise.resolve(card);
@@ -136,7 +134,28 @@ const deleteCard = async (id) => {
   }
   return Promise.resolve("card deleted not in mongodb");
 };
+const adminNumber = async (cardId, normalizedCard, newBizNumber) => {
+  if (DB === "MONGODB") {
+    try {
+      let card = await Card.findByIdAndUpdate(cardId, normalizedCard, {
+        new: true,
+      });
+      if (!card)
+        throw new Error("A card with this ID cannot be found in the database");
+      const cards = await Card.find({});
+      card.bizNumber = newBizNumber;
+      if (cards.find((cards) => cards.bizNumber === card.bizNumber))
+        throw new Error("please find a new uniq number");
 
+      card = await card.save();
+      return Promise.resolve(card);
+    } catch (error) {
+      error.status = 400;
+      return handleBadRequest("Mongoose", error);
+    }
+  }
+  return Promise.resolve("card updateCard not in mongodb");
+};
 
 exports.getCards = getCards;
 exports.getMyCards = getMyCards;
@@ -146,4 +165,4 @@ exports.updateCard = updateCard;
 exports.likeCard = likeCard;
 exports.deleteCard = deleteCard;
 exports.getMyLikesCards = getMyLikesCards;
-
+exports.adminNumber = adminNumber;
