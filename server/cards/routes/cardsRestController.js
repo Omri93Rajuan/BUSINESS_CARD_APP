@@ -85,15 +85,12 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-router.put("/:id/", auth, async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   try {
     let cardId = req.params.id;
-    const allCard = await getCard(cardId);
-    const {user_id} =allCard
     let card = req.body;
     let { _id, isBusiness } = req.user;
-
-    if (!isBusiness && _id !== user_id.toString() ||  _id !== user_id.toString() )
+    if (!isBusiness && _id !== card.user_id ||  _id !== card.user_id )
     return handleError(
       res,
       403,
