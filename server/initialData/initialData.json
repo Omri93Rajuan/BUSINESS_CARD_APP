@@ -12,7 +12,7 @@
           "street": "magnive",
           "houseNumber": "5"
         },
-        "image": { "url": "", "alt": "" }
+        "image": { "url": "", "alt": "one" }
       },
       {
         "name": { "first": "business", "last": "user" },
@@ -22,25 +22,25 @@
         "password": "Aa1234!",
         "address": {
           "country": "israel",
-          "city": "elad",
-          "street": "sadasd",
+          "city": "tel-aviv",
+          "street": "magnive",
           "houseNumber": "5"
         },
-        "image": { "url": "", "alt": "" }
+        "image": { "url": "", "alt": "2" }
       },
       {
         "name": { "first": "blogger", "last": "user" },
         "isBusiness": true,
         "phone": "050-0000000",
-        "email": "blog@gmail.com",
+        "email": "blogger@gmail.com",
         "password": "Aa1234!",
         "address": {
           "country": "israel",
-          "city": "elad-elad",
-          "street": "elad",
+          "city": "tel-aviv",
+          "street": "magnive",
           "houseNumber": "5"
         },
-        "image": { "url": "", "alt": "" }
+        "image": { "url": "", "alt": "3" }
       },
       {
         "name": { "first": "admin", "last": "user" },
@@ -55,11 +55,9 @@
           "street": "magnive",
           "houseNumber": "5"
         },
-        "image": { "url": "", "alt": "" }
+        "image": { "url": "", "alt": "4" }
       }
     ],
-
-
     "cards": [
       {
         "title": "first card",

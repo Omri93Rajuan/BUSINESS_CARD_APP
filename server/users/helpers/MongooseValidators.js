@@ -10,7 +10,7 @@ const URL = {
 const DEFAULT_VALIDATION = {
   type: String,
   required: true,
-  minLength: 2,
+  minLength: 0,
   maxLength: 256,
   trim: true,
   lowercase: true,

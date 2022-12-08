@@ -30,13 +30,13 @@ const registerValidation = user => {
           'user "password" must be at least nine characters long and contain an uppercase letter, a lowercase letter, a number and one of the following characters !@#$%^&*-',
       })
       .required(),
-    image: Joi.object()
+      image: Joi.object()
       .keys({
         url: Joi.string()
-          // .ruleset.regex(
-          //   /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/
-          // )
-          // .rule({ message: "user image mast be a valid url" })
+          .ruleset.regex(
+            /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/
+          )
+          .rule({ message: "User 'Image' must be a valid URL" })
           .allow(""),
         alt: Joi.string().min(2).max(256).allow(""),
       })
