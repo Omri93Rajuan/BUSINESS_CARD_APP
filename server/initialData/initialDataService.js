@@ -4,6 +4,7 @@ const { createCard } = require("../cards/models/cardsAccessDataService");
 const { registerUser } = require("../users/models/usersAccessDataService");
 const normalizeUser = require("../users/helpers/normalizeUser");
 const data = require("./initialData.json");
+const { generateUserPassword } = require("../users/helpers/bcrypt");
 
 const generateInitialCards = async () => {
   const { cards } = data;
@@ -25,6 +26,7 @@ const generateInitialUsers = async () => {
       try {
         const userId = "6376274068d78742d84f31d2";
         card = await normalizeUser(user, userId);
+        user.password = generateUserPassword (user.password);
         await registerUser (user);
         return;
       } catch (error) {
